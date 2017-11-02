@@ -13,17 +13,30 @@ class Lead(models.Model):
 		self.save()
 
 	def __str__(self):
-		return self.title
-
-
+		return self.name
 
 class Campaign(models.Model):
 	name = models.CharField(max_length=200)
 	data_added = models.DateTimeField(blank=True, null=True)
-	lead = models.ForeignKey('crm.Lead')
 
-	def create(self):
-		self.data_added=timezone.now()
+	def save_campaign(self):
+		self.data_added = timezone.now()
+		self.save()
 
 	def __str__(self):
-		return self.title
+		return self.name
+
+
+class Campaign_enrollment(models.Model):
+	lead = models.ForeignKey('crm.Lead')
+	Campaign = models.ForeignKey('crm.Campaign')
+	data_added = models.DateTimeField(blank=True, null=True)
+
+	def save_campaign_enrollment(self):
+		self.data_added = timezone.now()
+		self.save()
+
+
+class Document(models.Model):
+	docfile = models.FileField(upload_to='%Y/%m/%d')
+	

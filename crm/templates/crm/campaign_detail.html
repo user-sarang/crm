@@ -1,0 +1,24 @@
+
+<h1>{{ campaign.name }}<h1>
+<h3> You can add leads, call and manage sales for this campaign</h3>
+<body>
+        <!-- List of uploaded documents -->
+        {% if documents %}
+            <ul>
+                {% for document in documents %}
+                    <li><a href="{{ document.docfile.url }}">{{ document.docfile }}</a>
+
+                <a href="{%url 'delete_file' pk=document.pk%}">Delete</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No documents.</p>
+        {% endif %}
+
+        <!-- Upload form. Note enctype attribute! -->
+        <form action="{% url 'campaign_detail' pk=campaign.pk %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="docfile">
+            <input type="submit" value="Upload"/></p>
+        </form>
+

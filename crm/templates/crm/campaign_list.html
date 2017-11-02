@@ -1,8 +1,16 @@
 <html>
 <head>
 	<title>EdXengine lead manager 0.1</title>
-</head>head>
+</head>
 <h1>EdXengine lead manager 0.1</h1>
 <body>
 Here is your list of current active campaigns
+
+<ol>
+{% for c in campaigns %}
+	
+	<li><a href="{%url 'campaign_detail' pk=c.pk%}">{{ c.name }}</a></li>
+	
+{% endfor %}
+</ol>
 </body>
