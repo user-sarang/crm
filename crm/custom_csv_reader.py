@@ -1,8 +1,7 @@
-import csv
-import os
+from openpyxl import load_workbook
 
 
-def read_csv(file):
-	print(file)
-	for line in open(file,'r'):
-		print(line)
+# Read file
+def read_csv(filename)
+wb = load_workbook(filename, read_only=True)
+ws = wb.active()

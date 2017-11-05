@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from .models import Campaign, Document
 from django.http import HttpResponseRedirect
 from .forms import DocumentForm
-from .custom_csv_reader import read_csv
+from .lead_importer import read_csv
 
 # Create your views here.
 def campaign_list(request):
@@ -13,15 +13,27 @@ def campaign_list(request):
 
 
 def campaign_detail(request, pk):
+	#get current campaign
 	campaign = get_object_or_404(Campaign, pk=pk)
+
+	#If file upload was selected
 	if request.method == 'POST':
-		print('heere.....')
+		# Create a new document model form
 		form = DocumentForm(request.POST, request.FILES)
-		print(form.errors)
+		
+		# Check if form is valid
 		if form.is_valid():
+			#Create a new document model object
 			file = Document(docfile=request.FILES['docfile'])
+
+			#Saving to database
 			file.save()
-			read_csv(file.docfile.path)
+
+			#Process the file
+			lead_data = read_csv(file.docfile.path)
+			print(lead_data)
+
+			#Create users if not exists
 			return render(request, 'crm/file_upload.html',{'campaign': campaign,'file':file})
 			#return HttpResponseRedirect(reverse('campaign_detail',args=pk))
 	else:
