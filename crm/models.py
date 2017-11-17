@@ -15,8 +15,6 @@ class Lead(models.Model):
 	def __str__(self):
 		return self.name
 
-	class Meta:
-		unique_together = ["name", "email", "phone_number"]	
 
 class Campaign(models.Model):
 	name = models.CharField(max_length=200)
