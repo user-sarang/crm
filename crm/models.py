@@ -15,6 +15,9 @@ class Lead(models.Model):
 	def __str__(self):
 		return self.name
 
+	class Meta:
+		unique_together = ["name", "email", "phone_number"]	
+
 class Campaign(models.Model):
 	name = models.CharField(max_length=200)
 	data_added = models.DateTimeField(blank=True, null=True)
@@ -36,6 +39,8 @@ class Campaign_enrollment(models.Model):
 		self.data_added = timezone.now()
 		self.save()
 
+	def __str__(self):
+		return self.Campaign.name
 
 class Document(models.Model):
 	docfile = models.FileField(upload_to='%Y/%m/%d')

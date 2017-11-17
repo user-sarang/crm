@@ -70,11 +70,6 @@ def check_csv_file(first_row):
 
 
 def read_csv(filename):
-
-	if '.xlsx' not in filename.lower():
-		error =['only XLSX files are supported']
-		return [None,error]
-
 	wb = load_workbook(filename)
 	ws = wb.active
 
@@ -99,11 +94,15 @@ def read_csv(filename):
 			data_dict['email']=e[0].value
 			data_to_send.append(data_dict)
 
-	else: data_to_send = None
-	return [data_to_send,csv_errors]
+	else: data_to_send = None:
+return data_to_send
 	
 	
 
 
 		
 		
+		
+
+
+read_csv('file1.xlsx')
