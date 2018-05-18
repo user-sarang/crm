@@ -1,9 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
-from .models import Campaign, Document, Lead, Campaign_enrollment
-from django.http import HttpResponseRedirect
+from .models import Campaign, Document, Lead, Campaign_enrollment, Comment
+from django.http import HttpResponseRedirect, HttpResponse
 from .forms import DocumentForm
 from .lead_importer import read_csv
+from django.http import JsonResponse
+from django.core import serializers
+from django.utils import timezone
 
 # Create your views here.
 def campaign_list(request):
@@ -68,7 +71,48 @@ def campaign_detail(request, pk):
 	
 	# Load documents for the list page
 	documents = Document.objects.all()	
-	return render(request, 'crm/campaign_detail.html', {'campaign': campaign,'documents':documents})
+	enrollments = Campaign_enrollment.objects.filter(Campaign = campaign)
+	return render(request, 'crm/campaign_detail.html', {'campaign': campaign,'enrollments': enrollments})
+
+def campaign_enrollment_details(request, campaign_id, lead_id):
+
+	campaign_data = Campaign.objects.get(pk=campaign_id)
+	lead_data = Lead.objects.get(pk=lead_id)
+	ce = Campaign_enrollment.objects.filter(Campaign= campaign_data, lead=lead_data)
+
+
+
+	if request.method == "GET":
+		
+		comments = Comment.objects.filter(campaign_enrollment=ce[0])
+		
+		data = []
+
+		data.append(lead_data)
+
+		for comment in comments: data.append(comment)
+
+		
+		data = serializers.serialize("json", data)
+		return HttpResponse(data, content_type='json')
+
+
+	if request.method == "POST":
+		print ("##################")
+		ce[0].modify_campaign_enrollment()
+		comment = Comment(campaign_enrollment = ce[0], text=request.POST.get('comment_data'))
+		comment.save_comment()
+
+		if lead_data.date_modified is None:
+			lead_data.modify_lead()
+			
+		if comment.date_added > lead_data.date_modified: lead_data.modify_lead()
+
+
+		return HttpResponse('<h1>Success!</h1   >')
+
+
+
 
 def delete_file(request, pk):
 	try:

@@ -48,6 +48,8 @@ def check_csv_file(first_row):
 	"""
 	Checks to see important fields are present in
 	the uploaded csv file
+
+	return bool error  and error messages
 	"""
 	"""
 	Creating an array of header information
@@ -61,8 +63,7 @@ def check_csv_file(first_row):
 
 	#Checking the required fields
 	#Additional field requirements can be added here
-	if 'email' not in fields:
-		error.append('Email is not found')
+	if 'email' not in fields: error.append('Email is not found')
 	if 'full_name' not in fields: error.append('full name is not found')
 	if 'phone_number' not in fields: error.append('phone is not found')
 
@@ -71,13 +72,16 @@ def check_csv_file(first_row):
 
 def read_csv(filename):
 
+	# Check for importing only xlsx files
 	if '.xlsx' not in filename.lower():
 		error =['only XLSX files are supported']
 		return [None,error]
 
+	# Reading the active sheet - make sure the xlsx has only one sheet
 	wb = load_workbook(filename)
 	ws = wb.active
 
+	# Getting first row to check for errors
 	first_row = ws[1]
 	csv_has_error, csv_errors = check_csv_file(first_row)
 	if csv_has_error:
